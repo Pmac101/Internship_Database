@@ -16,18 +16,35 @@ def create_connection(database_file):
     return conn
 
 
-# Create table - done
-def create_table(conn, sql_table_create):
-    try:
-        c = conn.cursor()
-        c.execute(sql_table_create)
-        conn.commit()
-    except Error as e:
-        print(e)
+# Create new internship in 'internship' table - NOT done
+def create_new_internship(conn):
+    c = conn.cursor()
+
+    # TODO error handling for invalid input
+    company_name = input("Please enter the name of the company providing the internship:\n")
+
+    # TODO the following 2 variables are currently placeholders. need to edit once we choose column names for
+    #  'internship' table. don't forget to change variable names in SQL statement, too
+    x = input("Please enter the type of internship: ***placeholder1***\n")
+    y = input("Please enter...: ***placeholder2***\n")
+
+    # TODO maybe add prompt to verify user input is correct before executing INSERT statement
+    c.execute('''INSERT INTO internships VALUES (?, ?, ?)''', (company_name, x, y))
+
+    conn.commit()
+    print("Internship successfully created!\n")
+    choice = int(input("What would you like to do?\n1. Create another internship\n2. Return to Main Menu\n"))
+
+    if choice == 1:
+        print("\'Create another internship\' selected")
+        create_new_internship(conn)
+    else:
+        print("Returning to Main Menu...")
+        main_menu(conn)
 
 
 # Create new user in registered_users table - NOT done
-def new_user(conn):
+def create_new_user(conn):
     c = conn.cursor()
 
     # TODO all data needs to have a specific format to allow for easy querying
@@ -37,6 +54,7 @@ def new_user(conn):
     phone = input("Please enter your phone number:\n")
     email_address = input("Please enter your email address:\n")
 
+    # TODO maybe add prompt to verify user input is correct before executing INSERT statement
     try:
         c.execute('''INSERT INTO registered_users VALUES (?, ?, ?, ?, ?)''', (last, first, home_address, phone,
                                                                               email_address))
@@ -49,10 +67,20 @@ def new_user(conn):
         choice = int(input("What would you like to do?\n1. Try again\n2. Return to Main Menu\n"))
 
         if choice == 1:
-            new_user(conn)
+            create_new_user(conn)
         else:
             print("Returning to Main Menu...")
             main_menu(conn)
+
+
+# Create table - done
+def create_table(conn, sql_table_create):
+    try:
+        c = conn.cursor()
+        c.execute(sql_table_create)
+        conn.commit()
+    except Error as e:
+        print(e)
 
 
 # Create a query - NOT done
@@ -102,16 +130,19 @@ def create_query(conn):
 
 # TODO Displays main menu - NOT done
 def main_menu(conn):
-    menu_selection = int(input("Welcome to the internship database. Please select a number from the menu below.\n"
-                               "1. Registration\n2. Query\n3. Exit Program\n"))
+    menu_selection = int(input("Welcome to the internship database. Please enter a number from the menu below.\n"
+                               "1. Registration\n2. Query\n3. Create internship\n4. Exit program\n"))
 
     if menu_selection == 1:
         print("Registration selected")
-        new_user(conn)
+        create_new_user(conn)
     elif menu_selection == 2:
         print("Query selected")
         create_query(conn)
     elif menu_selection == 3:
+        print("Create internship selected")
+        create_new_internship(conn)
+    elif menu_selection == 4:
         # Closes connection
         conn.close()
         # Ends program
@@ -129,7 +160,7 @@ def main():
 
     # Creates a cursor to execute SQL commands
     cur = conn.cursor()
-    # TODO add address and phone number columns**continue here**
+
     # Creation of SQL tables
     sql_create_registered_users_table = '''CREATE TABLE IF NOT EXISTS registered_users (
                     lastname text NOT NULL,
