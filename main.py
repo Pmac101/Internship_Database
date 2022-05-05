@@ -1,5 +1,4 @@
 import sqlite3
-import sys
 import tkinter as tk
 from sqlite3 import Error
 from tkinter import *
@@ -29,8 +28,37 @@ def create_table(conn, sql_table_create):
         print(e)
 
 
-# ***** When assigning 'command=' parameter to buttons, do not put '()' after the function. It will run automatically
-# if you do! example: command=query() should look like command=query *****
+# Creates View from 'internships' table that displays companies offering internships
+def create_view_companies():
+    # Creates a window
+    top = Toplevel()
+    # Creates window title
+    top.title("View: Companies Available")
+    # Sets window size
+    top.geometry("500x400")
+    # Ensures this window stay on top of Main Menu when confirmation window pops up
+    top.attributes('-topmost', True)
+
+    # Creates connection to database
+    conn = create_connection('internship.db')
+    # Creates cursor
+    c = conn.cursor()
+
+    c.execute("SELECT company_name FROM available_companies ")
+    rows = c.fetchall()
+    results = ""
+
+    for row in rows:
+        results += str(row) + "\n"
+
+    conn.commit()
+
+    tk.Label(top, text="The following companies have internships available: ").grid(row=1, column=1)
+    tk.Label(top, text=results).grid(row=2)
+
+    main_menu_btn = Button(top, text="Main Menu", command=lambda: return_to_main_menu(top))
+    main_menu_btn.grid(row=3, column=1)
+
 
 # Creates application query window
 def application_query_window():
@@ -39,7 +67,7 @@ def application_query_window():
     # Creates window title
     top.title("Application Query")
     # Sets window size
-    top.geometry("500x400")
+    top.geometry("400x400")
     # Ensures this window stay on top of Main Menu when confirmation window pops up
     top.attributes('-topmost', True)
 
@@ -53,19 +81,16 @@ def application_query_window():
     rows = c.fetchall()
     results = ""
 
-    # TODO fix query output
     for row in rows:
         results += str(row) + "\n"
 
     conn.commit()
 
-    application_label = Label(top, text="Application search results: ")
-    application_label.grid(row=1, column=1)
-    results_label = Label(top, text=results)
-    results_label.grid(row=2)
+    tk.Label(top, text="Application search results: ").grid(row=1, column=0)
+    tk.Label(top, text=results).grid(row=2, column=0)
 
     main_menu_btn = Button(top, text="Main Menu", command=lambda: return_to_main_menu(top))
-    main_menu_btn.grid(row=3, column=1)
+    main_menu_btn.grid(row=3, column=0)
 
 
 # Creates internship query window
@@ -75,7 +100,7 @@ def internship_query_window():
     # Creates window title
     top.title("Internship Query")
     # Sets window size
-    top.geometry("500x400")
+    top.geometry("400x400")
     # Ensures this window stay on top of Main Menu when confirmation window pops up
     top.attributes('-topmost', True)
 
@@ -89,19 +114,16 @@ def internship_query_window():
     rows = c.fetchall()
     results = ""
 
-    # TODO fix query output
     for row in rows:
         results += str(row) + "\n"
 
     conn.commit()
 
-    internships_label = Label(top, text="Internship search results: ")
-    internships_label.grid(row=1, column=1)
-    results_label = Label(top, text=results)
-    results_label.grid(row=2)
+    tk.Label(top, text="Internship search results: ").grid(row=1, column=0)
+    tk.Label(top, text=results).grid(row=2, column=0)
 
     main_menu_btn = Button(top, text="Main Menu", command=lambda: return_to_main_menu(top))
-    main_menu_btn.grid(row=3, column=1)
+    main_menu_btn.grid(row=3, column=0)
 
 
 # Creates new window for 'Application'
@@ -111,7 +133,7 @@ def create_application_window():
     # Creates window title
     top.title("Create Application")
     # Sets window size
-    top.geometry("500x400")
+    top.geometry("400x400")
     # Ensures this window stay on top of Main Menu when confirmation window pops up
     top.attributes('-topmost', True)
 
@@ -121,12 +143,12 @@ def create_application_window():
     c = conn.cursor()
 
     # Creates display text
-    label_instructions = Label(top, text="Please fill in the boxes below:").grid(row=0)
-    label_app_id= Label(top, text="Application ID: ").grid(row=1)
-    label_internship_id = Label(top, text="Internship ID: ").grid(row=2)
-    label_applicant_name = Label(top, text="Applicant Name: ").grid(row=3)
-    label_status = Label(top, text="Status: ").grid(row=4)
-    label_dates = Label(top, text="Dates: ").grid(row=5)
+    tk.Label(top, text="Please fill in the boxes below:").grid(row=0)
+    tk.Label(top, text="Application ID: ").grid(row=1)
+    tk.Label(top, text="Internship ID: ").grid(row=2)
+    tk.Label(top, text="Applicant Name: ").grid(row=3)
+    tk.Label(top, text="Status: ").grid(row=4)
+    tk.Label(top, text="Dates: ").grid(row=5)
 
     # Creates input boxes. '.grid()' function must go on a separate line in order for user data to be saved properly
     box_app_id = Entry(top)
@@ -157,7 +179,7 @@ def create_new_internship_window():
     # Creates window title
     top.title("Create New Internship")
     # Sets window size
-    top.geometry("500x400")
+    top.geometry("400x400")
     # Ensures this window stay on top of Main Menu when confirmation window pops up
     top.attributes('-topmost', True)
 
@@ -167,13 +189,13 @@ def create_new_internship_window():
     c = conn.cursor()
 
     # Creates display text
-    label_instructions = Label(top, text="Please fill in the boxes below:").grid(row=0)
-    label_company_name = Label(top, text="Company Name: ").grid(row=1)
-    label_id = Label(top, text="Internship ID: ").grid(row=2)
-    label_application_term = Label(top, text="Application Term: ").grid(row=3)
-    label_internship_term = Label(top, text="Internship Term: ").grid(row=4)
-    label_description = Label(top, text="Description: ").grid(row=5)
-    label_review = Label(top, text="Experience Review: ").grid(row=6)
+    tk.Label(top, text="Please fill in the boxes below:").grid(row=0)
+    tk.Label(top, text="Company Name: ").grid(row=1)
+    tk.Label(top, text="Internship ID: ").grid(row=2)
+    tk.Label(top, text="Application Term: ").grid(row=3)
+    tk.Label(top, text="Internship Term: ").grid(row=4)
+    tk. Label(top, text="Description: ").grid(row=5)
+    tk.Label(top, text="Experience Review: ").grid(row=6)
 
     # Creates input boxes. '.grid()' function must go on a separate line in order for user data to be saved properly
     box_company_name = Entry(top)
@@ -200,25 +222,25 @@ def create_new_internship_window():
     main_menu_btn.grid(row=7, column=2)
 
 
-# Creates a new window for Company registration - not done
+# Creates a new window for Company registration
 def create_company_registration_window():
     # Creates a window
     top = Toplevel()
     # Creates window title
     top.title("Company Registration")
     # Sets window size
-    top.geometry("600x300")
+    top.geometry("400x400")
     # Ensures this window stay on top of Main Menu when confirmation window pops up
     top.attributes('-topmost', True)
 
     # Creates display text
-    label_instructions = Label(top, text="Please fill in the boxes below:").grid(row=0)
-    label_company_id = Label(top, text="Company ID: ").grid(row=1)
-    label_name = Label(top, text="Company Name: ").grid(row=2)
-    label_location = Label(top, text="Location: ").grid(row=3)
-    label_internship_id = Label(top, text="Internship ID: ").grid(row=4)
-    label_description = Label(top, text="Description: ").grid(row=5)
-    label_positions = Label(top, text="Positions Available: ").grid(row=6)
+    tk.Label(top, text="Please fill in the boxes below:").grid(row=0)
+    tk.Label(top, text="Company ID: ").grid(row=1)
+    tk.Label(top, text="Company Name: ").grid(row=2)
+    tk.Label(top, text="Location: ").grid(row=3)
+    tk.Label(top, text="Internship ID: ").grid(row=4)
+    tk.Label(top, text="Description: ").grid(row=5)
+    tk.Label(top, text="Positions Available: ").grid(row=6)
 
     # Creates input boxes. '.grid()' function must go on a separate line in order for user data to be saved properly
     box_company_id = Entry(top)
@@ -244,24 +266,24 @@ def create_company_registration_window():
     main_menu_btn.grid(row=7, column=2)
 
 
-# Creates a new window for Student registration - done
+# Creates a new window for Student registration
 def create_student_registration_window():
     # Creates a window
     top = Toplevel()
     # Creates window title
     top.title("Student Registration")
     # Sets window size
-    top.geometry("600x300")
+    top.geometry("400x400")
     # Ensures this window stay on top of Main Menu when confirmation window pops up
     top.attributes('-topmost', True)
 
     # Creates display text
-    label_instruction = Label(top, text="Please fill in the boxes below:").grid(row=0)
-    label_first = Label(top, text="First Name: ").grid(row=1)
-    label_last = Label(top, text="Last Name: ").grid(row=2)
-    label_address = Label(top, text="Address: ").grid(row=3)
-    label_phone = Label(top, text="Phone: ").grid(row=4)
-    label_email = Label(top, text="E-mail: ").grid(row=5)
+    tk.Label(top, text="Please fill in the boxes below:").grid(row=0)
+    tk.Label(top, text="First Name: ").grid(row=1)
+    tk.Label(top, text="Last Name: ").grid(row=2)
+    tk.Label(top, text="Address: ").grid(row=3)
+    tk.Label(top, text="Phone: ").grid(row=4)
+    tk.Label(top, text="E-mail: ").grid(row=5)
 
     # Creates input boxes. '.grid()' function must go on a separate line in order for user data to be saved properly
     box_first = Entry(top)
@@ -275,7 +297,7 @@ def create_student_registration_window():
     box_email = Entry(top)
     box_email.grid(row=5, column=1)
 
-    submit_button = Button(top, text="Save record", command=lambda: confirmation_company_input(box_first, box_last,
+    submit_button = Button(top, text="Save record", command=lambda: confirmation_student_input(box_first, box_last,
                                                                                                box_address,
                                                                                                box_phone, box_email))
     submit_button.grid(row=6, column=1)
@@ -322,7 +344,7 @@ def confirmation_company_input(company_id, name, location, internship_id, descri
         tk.messagebox.showinfo("Return", "Returning to the previous screen...")
 
 
-# Confirms user data collected from 'Internships' window is correct and then enters it into database - not done
+# Confirms user data collected from 'Internships' window is correct and then enters it into database
 def confirmation_internship_input(name, id_num, app_term, intern_term, description, review):
     message = tk.messagebox.askquestion("Confirm submission", "Is all of your information correct?", icon="question")
     if message == "yes":
@@ -341,7 +363,7 @@ def confirmation_internship_input(name, id_num, app_term, intern_term, descripti
         tk.messagebox.showinfo("Return", "Returning to the previous screen...")
 
 
-# Confirms user data collected from 'Student Registration' window is correct and then enters it into database - done
+# Confirms user data collected from 'Student Registration' window is correct and then enters it into database
 def confirmation_student_input(first, last, address, telephone, email):
     message = tk.messagebox.askquestion("Confirm submission", "Is all of your information correct?", icon="question")
     if message == "yes":
@@ -361,7 +383,7 @@ def confirmation_student_input(first, last, address, telephone, email):
         tk.messagebox.showinfo("Return", "Returning to the previous screen...")
 
 
-# Return to 'Main Menu' prompt. Closes current window if 'yes' is clicked - done
+# Return to 'Main Menu' prompt. Closes current window if 'yes' is clicked
 def return_to_main_menu(current_window):
     message = tk.messagebox.askquestion("Please confirm", "Return to Main Menu?", icon="question")
     if message == "yes":
@@ -371,28 +393,23 @@ def return_to_main_menu(current_window):
 
 
 def main():
-
     # creates database file or connects to database if the file already exists
     conn = create_connection('internship.db')
 
     # Creates a cursor to execute SQL commands
-    cur = conn.cursor()
+    c = conn.cursor()
 
     # Creates main window
     root = Tk()
     root.title("Main Window")
 
-    # TODO change window size as well as button layout. need to remove '.pack()' from label and button below first
-    #  when executing geometry() function
-    #root.geometry("500x300")
-
-    myLabel1 = Label(root, text="Welcome to the internship database. Please choose an option below:").pack()
-    # For the buttons below: in the section that says 'command=myClick1', do NOT add parenthesis after the
-    # 'myClick1'part. if you do, the command linked to the button will run automatically
+    tk.Label(root, text="Welcome to the internship database. Please choose an option below:").pack()
+    # Creation of Main Menu buttons
     tk.Button(root, text="Student Registration", command=create_student_registration_window).pack()
     tk.Button(root, text="Company Registration", command=create_company_registration_window).pack()
     tk.Button(root, text="Create Application", command=create_application_window).pack()
     tk.Button(root, text="Create Internship", command=create_new_internship_window).pack()
+    tk.Button(root, text="View: Companies", command=create_view_companies).pack()
     tk.Button(root, text="Query Applications", command=application_query_window).pack()
     tk.Button(root, text="Query Internships", command=internship_query_window).pack()
 
@@ -427,7 +444,6 @@ def main():
                             foreign key (internship_id) references internships
                             )'''
 
-    # TODO create menu option and window
     sql_create_application_table = '''CREATE TABLE IF NOT EXISTS application (
                            application_id integer,
                            internship_id integer,
@@ -437,6 +453,10 @@ def main():
                            primary key (application_id, applicant_name),
                            foreign key (internship_id) references internships
                            )'''
+
+    # Creating of VIEWS
+    c.execute('''CREATE VIEW IF NOT EXISTS available_companies AS SELECT company_name, internship_id, 
+    application_term, internship_term, description, experience_review FROM internships''')
 
     if conn is not None:
         # Create 'registered_users' table
