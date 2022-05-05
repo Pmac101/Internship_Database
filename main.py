@@ -35,7 +35,7 @@ def create_view_companies():
     # Creates window title
     top.title("View: Companies Available")
     # Sets window size
-    top.geometry("500x400")
+    top.geometry("800x400")
     # Ensures this window stay on top of Main Menu when confirmation window pops up
     top.attributes('-topmost', True)
 
@@ -53,11 +53,15 @@ def create_view_companies():
 
     conn.commit()
 
-    tk.Label(top, text="The following companies have internships available: ").grid(row=1, column=1)
-    tk.Label(top, text=results).grid(row=2)
+    tk.Label(top, text="The following companies have internships available: ").grid(row=1, column=0)
+    #tk.Label(top, text=results).grid(row=2)
+    # Creates output Text box
+    output_box = Text(top, height=15, width=95, bg="white")
+    output_box.grid(row=2, column=0)
+    output_box.insert(END, results)
 
     main_menu_btn = Button(top, text="Main Menu", command=lambda: return_to_main_menu(top))
-    main_menu_btn.grid(row=3, column=1)
+    main_menu_btn.grid(row=3, column=0)
 
 
 # Creates application query window
@@ -67,7 +71,7 @@ def application_query_window():
     # Creates window title
     top.title("Application Query")
     # Sets window size
-    top.geometry("400x400")
+    top.geometry("800x400")
     # Ensures this window stay on top of Main Menu when confirmation window pops up
     top.attributes('-topmost', True)
 
@@ -87,7 +91,10 @@ def application_query_window():
     conn.commit()
 
     tk.Label(top, text="Application search results: ").grid(row=1, column=0)
-    tk.Label(top, text=results).grid(row=2, column=0)
+    # Creates output Text box
+    output_box = Text(top, height=15, width=95, bg="white")
+    output_box.grid(row=2, column=0)
+    output_box.insert(END, results)
 
     main_menu_btn = Button(top, text="Main Menu", command=lambda: return_to_main_menu(top))
     main_menu_btn.grid(row=3, column=0)
@@ -100,7 +107,7 @@ def internship_query_window():
     # Creates window title
     top.title("Internship Query")
     # Sets window size
-    top.geometry("400x400")
+    top.geometry("800x400")
     # Ensures this window stay on top of Main Menu when confirmation window pops up
     top.attributes('-topmost', True)
 
@@ -120,7 +127,10 @@ def internship_query_window():
     conn.commit()
 
     tk.Label(top, text="Internship search results: ").grid(row=1, column=0)
-    tk.Label(top, text=results).grid(row=2, column=0)
+    # Creates output Text box
+    output_box = Text(top, height=15, width=95, bg="white")
+    output_box.grid(row=2, column=0)
+    output_box.insert(END, results)
 
     main_menu_btn = Button(top, text="Main Menu", command=lambda: return_to_main_menu(top))
     main_menu_btn.grid(row=3, column=0)
@@ -422,22 +432,20 @@ def main():
                     email text NOT NULL UNIQUE
                     )'''
 
-    # TODO change data type back to Integer for id
     sql_create_internships_table = '''CREATE TABLE IF NOT EXISTS internships (
                         company_name text,
-                        internship_id text,
+                        internship_id integer,
                         application_term text,
                         internship_term text,
                         description text,
                         experience_review text
                         )'''
 
-    # TODO change data type back to Integer for id and positions
     sql_create_company_table = '''CREATE TABLE IF NOT EXISTS company (
-                            company_id  text,
+                            company_id  integer,
                             company_name text,
                             location text,
-                            internship_id text,
+                            internship_id integer,
                             internship_description text,
                             num_of_positions text,
                             primary key (company_id),
