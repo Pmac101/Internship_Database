@@ -29,15 +29,51 @@ def create_table(conn, sql_table_create):
         print(e)
 
 
-# TODO when assigning 'command=' parameter to buttons, do not put '()' after the function. It will run automatically
-#  if you do! example: command=query() should look like command=query
+# ***** When assigning 'command=' parameter to buttons, do not put '()' after the function. It will run automatically
+# if you do! example: command=query() should look like command=query *****
 
-# Creates query window
+# Creates application query window
+def application_query_window():
+    # Creates a window
+    top = Toplevel()
+    # Creates window title
+    top.title("Application Query")
+    # Sets window size
+    top.geometry("500x400")
+    # Ensures this window stay on top of Main Menu when confirmation window pops up
+    top.attributes('-topmost', True)
+
+    # Creates connection to database
+    conn = create_connection('internship.db')
+    # Creates cursor
+    c = conn.cursor()
+
+    c.execute("SELECT * FROM application")
+
+    rows = c.fetchall()
+    results = ""
+
+    # TODO fix query output
+    for row in rows:
+        results += str(row) + "\n"
+
+    conn.commit()
+
+    application_label = Label(top, text="Application search results: ")
+    application_label.grid(row=1, column=1)
+    results_label = Label(top, text=results)
+    results_label.grid(row=2)
+
+    main_menu_btn = Button(top, text="Main Menu", command=lambda: return_to_main_menu(top))
+    main_menu_btn.grid(row=3, column=1)
+
+
+# Creates internship query window
 def internship_query_window():
     # Creates a window
     top = Toplevel()
     # Creates window title
-    top.title("Query")
+    top.title("Internship Query")
     # Sets window size
     top.geometry("500x400")
     # Ensures this window stay on top of Main Menu when confirmation window pops up
@@ -49,23 +85,72 @@ def internship_query_window():
     c = conn.cursor()
 
     c.execute("SELECT * FROM internships")
-    conn.commit()
+
     rows = c.fetchall()
     results = ""
 
-    for row in rows[0]:
-        results += str(row) + " "
+    # TODO fix query output
+    for row in rows:
+        results += str(row) + "\n"
 
-    internships_label = Label(top, text="Search results: ")
+    conn.commit()
+
+    internships_label = Label(top, text="Internship search results: ")
     internships_label.grid(row=1, column=1)
     results_label = Label(top, text=results)
-    results_label.grid(row=2, column=1)
+    results_label.grid(row=2)
 
     main_menu_btn = Button(top, text="Main Menu", command=lambda: return_to_main_menu(top))
     main_menu_btn.grid(row=3, column=1)
 
 
-# Creates a new window for creating internships
+# Creates new window for 'Application'
+def create_application_window():
+    # Creates a window
+    top = Toplevel()
+    # Creates window title
+    top.title("Create Application")
+    # Sets window size
+    top.geometry("500x400")
+    # Ensures this window stay on top of Main Menu when confirmation window pops up
+    top.attributes('-topmost', True)
+
+    # Creates connection to database
+    conn = create_connection('internship.db')
+    # Creates cursor
+    c = conn.cursor()
+
+    # Creates display text
+    label_instructions = Label(top, text="Please fill in the boxes below:").grid(row=0)
+    label_app_id= Label(top, text="Application ID: ").grid(row=1)
+    label_internship_id = Label(top, text="Internship ID: ").grid(row=2)
+    label_applicant_name = Label(top, text="Applicant Name: ").grid(row=3)
+    label_status = Label(top, text="Status: ").grid(row=4)
+    label_dates = Label(top, text="Dates: ").grid(row=5)
+
+    # Creates input boxes. '.grid()' function must go on a separate line in order for user data to be saved properly
+    box_app_id = Entry(top)
+    box_app_id.grid(row=1, column=1)
+    box_internship_id = Entry(top)
+    box_internship_id.grid(row=2, column=1)
+    box_applicant_name = Entry(top)
+    box_applicant_name.grid(row=3, column=1)
+    box_status = Entry(top)
+    box_status.grid(row=4, column=1)
+    box_dates = Entry(top)
+    box_dates.grid(row=5, column=1)
+
+    submit_button = Button(top, text="Submit Application", command=lambda: confirmation_application_input(box_app_id,
+                                                                                                    box_internship_id,
+                                                                                                    box_applicant_name,
+                                                                                                    box_status,
+                                                                                                    box_dates))
+    submit_button.grid(row=6, column=1)
+    main_menu_btn = Button(top, text="Main Menu", command=lambda: return_to_main_menu(top))
+    main_menu_btn.grid(row=6, column=2)
+
+
+# Creates new window for creating internships
 def create_new_internship_window():
     # Creates a window
     top = Toplevel()
@@ -105,11 +190,11 @@ def create_new_internship_window():
     box_review.grid(row=6, column=1)
 
     submit_button = Button(top, text="Save record", command=lambda: confirmation_internship_input(box_company_name,
-                                                                                               box_id,
-                                                                                               box_app_term,
-                                                                                               box_internship_term,
-                                                                                               box_description,
-                                                                                               box_review))
+                                                                                                  box_id,
+                                                                                                  box_app_term,
+                                                                                                  box_internship_term,
+                                                                                                  box_description,
+                                                                                                  box_review))
     submit_button.grid(row=7, column=1)
     main_menu_btn = Button(top, text="Main Menu", command=lambda: return_to_main_menu(top))
     main_menu_btn.grid(row=7, column=2)
@@ -198,7 +283,26 @@ def create_student_registration_window():
     main_menu_btn.grid(row=6, column=2)
 
 
-# Confirms user data collected from 'Company Registration' window is correct and then enters it into database - not done
+# Confirms user data collected from 'Application' window is correct and then enters it into database
+def confirmation_application_input(application_id, internship_id, applicant, status, dates):
+    message = tk.messagebox.askquestion("Confirm submission", "Is all of your information correct?", icon="question")
+    if message == "yes":
+        try:
+            # need connection for cursor to work
+            conn = create_connection('internship.db')
+            c = conn.cursor()
+            c.execute('''INSERT INTO application VALUES (?, ?, ?, ?, ?)''', (application_id.get(), internship_id.get(),
+                                                                             applicant.get(), status.get(),
+                                                                             dates.get()))
+            conn.commit()
+            print("Application successfully created!")
+        except Error as e:
+            print(e)
+    else:
+        tk.messagebox.showinfo("Return", "Returning to the previous screen...")
+
+
+# Confirms user data collected from 'Company Registration' window is correct and then enters it into database
 def confirmation_company_input(company_id, name, location, internship_id, description, positions):
     message = tk.messagebox.askquestion("Confirm submission", "Is all of your information correct?", icon="question")
     if message == "yes":
@@ -211,7 +315,7 @@ def confirmation_company_input(company_id, name, location, internship_id, descri
                                                                             description.get(),
                                                                             positions.get()))
             conn.commit()
-            print("Registration successful! Returning to Main Menu.")
+            print("Company registration successful!")
         except Error as e:
             print(e)
     else:
@@ -230,7 +334,7 @@ def confirmation_internship_input(name, id_num, app_term, intern_term, descripti
                                                                                 app_term.get(), intern_term.get(),
                                                                                 description.get(), review.get()))
             conn.commit()
-            print("Registration successful! Returning to Main Menu.")
+            print("Internship successfully created!")
         except Error as e:
             print(e)
     else:
@@ -250,7 +354,7 @@ def confirmation_student_input(first, last, address, telephone, email):
                                                                                   telephone.get(),
                                                                                   email.get()))
             conn.commit()
-            print("Registration successful! Returning to Main Menu.")
+            print("Student registration successful!")
         except Error as e:
             print(e)
     else:
@@ -264,29 +368,6 @@ def return_to_main_menu(current_window):
         current_window.destroy()
     else:
         tk.messagebox.showinfo("Return", "Returning to the previous screen...")
-
-
-# def main_menu(conn):
-#    menu_selection = int(input("Welcome to the internship database. Please enter a number from the menu below.\n"
-#                               "1. Registration\n2. Query\n3. Create internship\n4. Exit program\n"))
-#
-#    # if menu_selection == 1:
-#    #    print("Registration selected")
-#    #    create_new_user(conn)
-#    #if menu_selection == 2:
-#    #    print("Query selected")
-#    if menu_selection == 3:
-#        print("Create internship selected")
-#        create_new_internship(conn)
-#    elif menu_selection == 4:
-#        # Closes connection
-#        conn.close()
-#        # Ends program
-#        sys.exit("Exiting program now...")
-#    else:
-#        # TODO need error handling here for input other than integer
-#        print("Invalid input. Please try again.")
-#        main_menu(conn)
 
 
 def main():
@@ -310,9 +391,10 @@ def main():
     # 'myClick1'part. if you do, the command linked to the button will run automatically
     tk.Button(root, text="Student Registration", command=create_student_registration_window).pack()
     tk.Button(root, text="Company Registration", command=create_company_registration_window).pack()
-    tk.Button(root, text="Query Internships", command=internship_query_window).pack()
+    tk.Button(root, text="Create Application", command=create_application_window).pack()
     tk.Button(root, text="Create Internship", command=create_new_internship_window).pack()
-    tk.Button(root, text="Applications").pack()
+    tk.Button(root, text="Query Applications", command=application_query_window).pack()
+    tk.Button(root, text="Query Internships", command=internship_query_window).pack()
 
     # Creation of SQL tables
     sql_create_registered_users_table = '''CREATE TABLE IF NOT EXISTS registered_users (
