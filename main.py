@@ -30,39 +30,39 @@ def create_table(conn, sql_table_create):
 
 
 # **DISABLED** Creates View from 'internships' table that displays companies offering internships
-def create_view_companies():
-    # Creates a window
-    top = Toplevel()
-    # Creates window title
-    top.title("View: Companies Available")
-    # Sets window size
-    top.geometry("800x400")
-    # Ensures this window stay on top of Main Menu when confirmation window pops up
-    top.attributes('-topmost', True)
-
-    # Creates connection to database
-    conn = create_connection('internship.db')
-    # Creates cursor
-    c = conn.cursor()
-
-    c.execute("SELECT company_name FROM available_companies ")
-    rows = c.fetchall()
-    results = ""
-
-    for row in rows:
-        results += str(row) + "\n"
-
-    conn.commit()
-
-    Label(top, text="The following companies have internships available: ").grid(row=1, column=0)
-    #tk.Label(top, text=results).grid(row=2)
-    # Creates output Text box
-    output_box = Text(top, height=15, width=95, bg="white")
-    output_box.grid(row=2, column=0)
-    output_box.insert(END, results)
-
-    main_menu_btn = Button(top, text="Main Menu", command=lambda: return_to_main_menu(top))
-    main_menu_btn.grid(row=3, column=0)
+# def create_view_companies():
+#    # Creates a window
+#    top = Toplevel()
+#    # Creates window title
+#    top.title("View: Companies Available")
+#    # Sets window size
+#    top.geometry("800x400")
+#    # Ensures this window stay on top of Main Menu when confirmation window pops up
+#    top.attributes('-topmost', True)
+#
+#    # Creates connection to database
+#    conn = create_connection('internship.db')
+#    # Creates cursor
+#    c = conn.cursor()
+#
+#    c.execute("SELECT company_name FROM available_companies ")
+#    rows = c.fetchall()
+#    results = ""
+#
+#    for row in rows:
+#        results += str(row) + "\n"
+#
+#    conn.commit()
+#
+#    Label(top, text="The following companies have internships available: ").grid(row=1, column=0)
+#    #tk.Label(top, text=results).grid(row=2)
+#    # Creates output Text box
+#    output_box = Text(top, height=15, width=95, bg="white")
+#    output_box.grid(row=2, column=0)
+#    output_box.insert(END, results)
+#
+#    main_menu_btn = Button(top, text="Main Menu", command=lambda: return_to_main_menu(top))
+#    main_menu_btn.grid(row=3, column=0)
 
 
 # Creates new window for 'Application'
@@ -116,11 +116,13 @@ def create_new_internship_window():
     # Creates a window
     top = Toplevel()
     # Creates window title
-    top.title("Create New Internship")
+    top.title("Create Internship")
     # Sets window size
-    top.geometry("400x400")
+    top.geometry("400x250")
     # Ensures this window stay on top of Main Menu when confirmation window pops up
     top.attributes('-topmost', True)
+    # Sets background color
+    top.configure(bg="#029E6D")
 
     # Creates connection to database
     conn = create_connection('internship.db')
@@ -131,10 +133,10 @@ def create_new_internship_window():
     Label(top, text="Please fill in the boxes below:").grid(row=0)
     Label(top, text="Company Name: ").grid(row=1)
     Label(top, text="Internship ID: ").grid(row=2)
-    Label(top, text="Application Term: ").grid(row=3)
     Label(top, text="Internship Term: ").grid(row=4)
     Label(top, text="Description: ").grid(row=5)
     Label(top, text="Experience Review: ").grid(row=6)
+    Label(top, text="Description: ").grid(row=3)
 
     # Creates input boxes. '.grid()' function must go on a separate line in order for user data to be saved properly
     box_company_name = Entry(top)
@@ -159,7 +161,6 @@ def create_new_internship_window():
     submit_button.grid(row=7, column=1)
     main_menu_btn = Button(top, text="Main Menu", command=lambda: return_to_main_menu(top))
     main_menu_btn.grid(row=7, column=2)
-
 
 
 # Confirms user data collected from 'Application' window is correct and then enters it into database
@@ -250,21 +251,25 @@ def return_to_main_menu(current_window):
 
 
 def main():
+    # TODO fix multiple connections
+    # TODO add style theme
     # creates database file or connects to database if the file already exists
     conn = create_connection('internship.db')
 
     # Creates main window
     root = Tk()
     root.title("Main Window")
+    # Sets background color
+    root.configure(bg="#029E6D")
 
-    Label(root, text="Welcome to the internship database. Please choose an option below:").pack()
+    Label(root, text="Welcome to the internship database. Please choose an option below:", font=14).pack()
     # Creation of Main Menu buttons
-    Button(root, text="Student Registration", command=r.create_student_registration_window).pack()
-    Button(root, text="Company Registration", command=r.create_company_registration_window).pack()
-    Button(root, text="Create Application", command=create_application_window).pack()
-    Button(root, text="Create Internship", command=create_new_internship_window).pack()
-    Button(root, text="Query Applications", command=q.application_query_window).pack()
-    Button(root, text="Query Internships", command=q.internship_query_window).pack()
+    Button(root, text="Student Registration", font=14, command=r.create_student_registration_window).pack()
+    Button(root, text="Company Registration", font=14, command=r.create_company_registration_window).pack()
+    Button(root, text="Create Application", font=14, command=create_application_window).pack()
+    Button(root, text="Create Internship", font=14, command=create_new_internship_window).pack()
+    Button(root, text="Query Applications", font=14, command=q.application_query_window).pack()
+    Button(root, text="Query Internships", font=14, command=q.internship_query_window).pack()
 
     # Disabled buttons
     # tk.Button(root, text="View: Companies", command=create_view_companies).pack()
@@ -281,10 +286,9 @@ def main():
     sql_create_internships_table = '''CREATE TABLE IF NOT EXISTS internships (
                         company_name text,
                         internship_id integer,
-                        application_term text,
-                        internship_term text,
-                        description text,
-                        experience_review text
+                        start_date text,
+                        end_date text,
+                        description text
                         )'''
 
     sql_create_company_table = '''CREATE TABLE IF NOT EXISTS company (
@@ -308,7 +312,7 @@ def main():
                            foreign key (internship_id) references internships
                            )'''
 
-    # Creating of VIEWS
+    # **DISABLED** Creation of VIEWS
     # c.execute('''CREATE VIEW IF NOT EXISTS available_companies AS SELECT company_name, internship_id,
     # application_term, internship_term, description, experience_review FROM internships''')
 
