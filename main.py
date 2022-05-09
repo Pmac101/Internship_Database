@@ -1,9 +1,11 @@
 import sqlite3
+import create as c
 import query as q
 import registration as r
 from sqlite3 import Error
 from tkinter import *
 from tkinter import messagebox
+from PIL import ImageTk, Image
 
 
 # Create connection to database - done
@@ -29,153 +31,38 @@ def create_table(conn, sql_table_create):
         print(e)
 
 
-# **DISABLED** Creates View from 'internships' table that displays companies offering internships
-# def create_view_companies():
-#    # Creates a window
-#    top = Toplevel()
-#    # Creates window title
-#    top.title("View: Companies Available")
-#    # Sets window size
-#    top.geometry("800x400")
-#    # Ensures this window stay on top of Main Menu when confirmation window pops up
-#    top.attributes('-topmost', True)
-#
-#    # Creates connection to database
-#    conn = create_connection('internship.db')
-#    # Creates cursor
-#    c = conn.cursor()
-#
-#    c.execute("SELECT company_name FROM available_companies ")
-#    rows = c.fetchall()
-#    results = ""
-#
-#    for row in rows:
-#        results += str(row) + "\n"
-#
-#    conn.commit()
-#
-#    Label(top, text="The following companies have internships available: ").grid(row=1, column=0)
-#    #tk.Label(top, text=results).grid(row=2)
-#    # Creates output Text box
-#    output_box = Text(top, height=15, width=95, bg="white")
-#    output_box.grid(row=2, column=0)
-#    output_box.insert(END, results)
-#
-#    main_menu_btn = Button(top, text="Main Menu", command=lambda: return_to_main_menu(top))
-#    main_menu_btn.grid(row=3, column=0)
-
-
-# Creates new window for 'Application'
-def create_application_window():
-    # Creates a window
-    top = Toplevel()
-    # Creates window title
-    top.title("Create Application")
-    # Sets window size
-    top.geometry("400x400")
-    # Ensures this window stay on top of Main Menu when confirmation window pops up
-    top.attributes('-topmost', True)
-
-    # Creates connection to database
-    conn = create_connection('internship.db')
-    # Creates cursor
-    c = conn.cursor()
-
-    # Creates display text
-    Label(top, text="Please fill in the boxes below:").grid(row=0)
-    Label(top, text="Application ID: ").grid(row=1)
-    Label(top, text="Internship ID: ").grid(row=2)
-    Label(top, text="Applicant Name: ").grid(row=3)
-    Label(top, text="Status: ").grid(row=4)
-    Label(top, text="Dates: ").grid(row=5)
-
-    # Creates input boxes. '.grid()' function must go on a separate line in order for user data to be saved properly
-    box_app_id = Entry(top)
-    box_app_id.grid(row=1, column=1)
-    box_internship_id = Entry(top)
-    box_internship_id.grid(row=2, column=1)
-    box_applicant_name = Entry(top)
-    box_applicant_name.grid(row=3, column=1)
-    box_status = Entry(top)
-    box_status.grid(row=4, column=1)
-    box_dates = Entry(top)
-    box_dates.grid(row=5, column=1)
-
-    submit_button = Button(top, text="Submit Application", command=lambda: confirmation_application_input(box_app_id,
-                                                                                                    box_internship_id,
-                                                                                                    box_applicant_name,
-                                                                                                    box_status,
-                                                                                                    box_dates))
-    submit_button.grid(row=6, column=1)
-    main_menu_btn = Button(top, text="Main Menu", command=lambda: return_to_main_menu(top))
-    main_menu_btn.grid(row=6, column=2)
-
-
-# Creates new window for creating internships
-def create_new_internship_window():
-    # Creates a window
-    top = Toplevel()
-    # Creates window title
-    top.title("Create Internship")
-    # Sets window size
-    top.geometry("400x250")
-    # Ensures this window stay on top of Main Menu when confirmation window pops up
-    top.attributes('-topmost', True)
-    # Sets background color
-    top.configure(bg="#029E6D")
-
-    # Creates connection to database
-    conn = create_connection('internship.db')
-    # Creates cursor
-    c = conn.cursor()
-
-    # Creates display text
-    Label(top, text="Please fill in the boxes below:").grid(row=0)
-    Label(top, text="Company Name: ").grid(row=1)
-    Label(top, text="Internship ID: ").grid(row=2)
-    Label(top, text="Internship Term: ").grid(row=4)
-    Label(top, text="Description: ").grid(row=5)
-    Label(top, text="Experience Review: ").grid(row=6)
-    Label(top, text="Description: ").grid(row=3)
-
-    # Creates input boxes. '.grid()' function must go on a separate line in order for user data to be saved properly
-    box_company_name = Entry(top)
-    box_company_name.grid(row=1, column=1)
-    box_id = Entry(top)
-    box_id.grid(row=2, column=1)
-    box_app_term = Entry(top)
-    box_app_term.grid(row=3, column=1)
-    box_internship_term = Entry(top)
-    box_internship_term.grid(row=4, column=1)
-    box_description = Entry(top)
-    box_description.grid(row=5, column=1)
-    box_review = Entry(top)
-    box_review.grid(row=6, column=1)
-
-    submit_button = Button(top, text="Save record", command=lambda: confirmation_internship_input(box_company_name,
-                                                                                                  box_id,
-                                                                                                  box_app_term,
-                                                                                                  box_internship_term,
-                                                                                                  box_description,
-                                                                                                  box_review))
-    submit_button.grid(row=7, column=1)
-    main_menu_btn = Button(top, text="Main Menu", command=lambda: return_to_main_menu(top))
-    main_menu_btn.grid(row=7, column=2)
-
-
 # Confirms user data collected from 'Application' window is correct and then enters it into database
-def confirmation_application_input(application_id, internship_id, applicant, status, dates):
+def confirmation_application_input(s_id, first, last, internship_id):
     message = messagebox.askquestion("Confirm submission", "Is all of your information correct?", icon="question")
     if message == "yes":
         try:
-            # need connection for cursor to work
-            conn = create_connection('internship.db')
-            c = conn.cursor()
-            c.execute('''INSERT INTO application VALUES (?, ?, ?, ?, ?)''', (application_id.get(), internship_id.get(),
-                                                                             applicant.get(), status.get(),
-                                                                             dates.get()))
-            conn.commit()
-            print("Application successfully created!")
+            if not s_id.get() or not first.get() or not last.get() or not internship_id.get():
+                messagebox.showwarning(title="Empty Field", message="Please complete each section.")
+            else:
+                try:
+                    # Checks if data in Student ID and Internship ID fields are integers
+                    int(s_id.get())
+                    int(internship_id.get())
+
+                    app_id__placeholder = None
+
+                    # need connection for cursor to work
+                    conn = create_connection('internship.db')
+                    c = conn.cursor()
+                    c.execute('''INSERT INTO application VALUES (?, ?, ?, ?, ?)''', (app_id__placeholder, s_id.get(),
+                                                                                     first.get(), last.get(),
+                                                                                     internship_id.get()))
+                    conn.commit()
+
+                    c.execute('''SELECT application_id FROM application ORDER BY application_id DESC LIMIT 1''')
+                    application_number = c.fetchone()
+
+                    messagebox.showinfo(title="You're all set!", message="Application successfully submitted! Your"
+                                                                         "application ID is: " +
+                                                                         str(application_number[0]))
+                except ValueError:
+                    messagebox.showwarning(title="Invalid Data Type", message="Student ID and Internship ID may only "
+                                                                              "contain numbers.")
         except Error as e:
             print(e)
     else:
@@ -183,38 +70,66 @@ def confirmation_application_input(application_id, internship_id, applicant, sta
 
 
 # Confirms user data collected from 'Company Registration' window is correct and then enters it into database
-def confirmation_company_input(company_id, name, location, internship_id, description, positions):
+def confirmation_company_input(name, location, phone, email):
     message = messagebox.askquestion("Confirm submission", "Is all of your information correct?", icon="question")
     if message == "yes":
         try:
-            # need connection for cursor to work
-            conn = create_connection('internship.db')
-            c = conn.cursor()
-            c.execute('''INSERT INTO company VALUES (?, ?, ?, ?, ?, ?)''', (company_id.get(), name.get(),
-                                                                            location.get(), internship_id.get(),
-                                                                            description.get(),
-                                                                            positions.get()))
-            conn.commit()
-            print("Company registration successful!")
-        except Error as e:
-            print(e)
+            if not name.get() or not location.get() or not phone.get() or not email.get():
+                messagebox.showwarning(title="Empty Field", message="Please complete each section.")
+            else:
+                try:
+                    increment_placeholder = None
+
+                    # need connection for cursor to work
+                    conn = create_connection('internship.db')
+                    c = conn.cursor()
+
+                    c.execute('''INSERT INTO registered_companies VALUES (?, ?, ?, ?, ?)''', (increment_placeholder,
+                                                                                              name.get(),
+                                                                                              location.get(),
+                                                                                              phone.get(), email.get()))
+                    conn.commit()
+
+                    c.execute('''SELECT company_id FROM registered_companies ORDER BY company_id DESC LIMIT 1''')
+                    company_number = c.fetchone()
+
+                    messagebox.showinfo(title="You're all set!", message="Company registration successful! Your "
+                                                                         "company ID is: " + str(company_number[0]))
+                except ValueError:
+                    messagebox.showwarning(title="Invalid Data Type", message="**update this**")
+        except Error:
+            messagebox.showwarning(title="Unable To Register", message="This email address has already been "
+                                                                       "registered. Please try a different one.")
     else:
         messagebox.showinfo("Return", "Returning to the previous screen...")
 
 
 # Confirms user data collected from 'Internships' window is correct and then enters it into database
-def confirmation_internship_input(name, id_num, app_term, intern_term, description, review):
+def confirmation_internship_input(name, start, end, description):
     message = messagebox.askquestion("Confirm submission", "Is all of your information correct?", icon="question")
     if message == "yes":
         try:
-            # need connection for cursor to work
-            conn = create_connection('internship.db')
-            c = conn.cursor()
-            c.execute('''INSERT INTO internships VALUES (?, ?, ?, ?, ?, ?)''', (name.get(), id_num.get(),
-                                                                                app_term.get(), intern_term.get(),
-                                                                                description.get(), review.get()))
-            conn.commit()
-            print("Internship successfully created!")
+            if not name.get() or not start.get() or not end.get() or not description.get("1.0", END):
+                messagebox.showwarning(title="Empty Field", message="Please complete each section.")
+            else:
+
+                increment_placeholder = None
+
+                # need connection for cursor to work
+                conn = create_connection('internship.db')
+                c = conn.cursor()
+
+                c.execute('''INSERT INTO internships VALUES (?, ?, ?, ?, ?)''', (increment_placeholder, name.get(),
+                                                                                 start.get(), end.get(),
+                                                                                 description.get("1.0", END)))
+                conn.commit()
+
+                c.execute('''SELECT internship_id FROM internships ORDER BY internship_id DESC LIMIT 1''')
+                internship_number = c.fetchone()
+
+                messagebox.showinfo(title="You're all set!", message="Internship successfully created! The ID number "
+                                                                     "for this internship is: " +
+                                                                     str(internship_number[0]))
         except Error as e:
             print(e)
     else:
@@ -222,21 +137,34 @@ def confirmation_internship_input(name, id_num, app_term, intern_term, descripti
 
 
 # Confirms user data collected from 'Student Registration' window is correct and then enters it into database
-def confirmation_student_input(first, last, address, telephone, email):
+def confirmation_student_input(s_id, first, last, address, phone, email):
     message = messagebox.askquestion("Confirm submission", "Is all of your information correct?", icon="question")
     if message == "yes":
         try:
-            # need connection for cursor to work
-            conn = create_connection('internship.db')
-            c = conn.cursor()
-            c.execute('''INSERT INTO registered_users VALUES (?, ?, ?, ?, ?)''', (last.get(), first.get(),
-                                                                                  address.get(),
-                                                                                  telephone.get(),
-                                                                                  email.get()))
-            conn.commit()
-            print("Student registration successful!")
-        except Error as e:
-            print(e)
+            # Checks each variable to see if it is empty
+            if not s_id.get() or not first.get() or not last.get() or not phone.get() or not email.get():
+                messagebox.showwarning(title="Empty Field", message="Please complete each section.")
+            else:
+                try:
+                    # Checks if s_id is an integer type
+                    int(s_id.get())
+
+                    # need connection for cursor to work
+                    conn = create_connection('internship.db')
+                    c = conn.cursor()
+                    c.execute('''INSERT INTO registered_students VALUES (?, ?, ?, ?, ?, ?)''', (s_id.get(), first.get(),
+                                                                                                last.get(),
+                                                                                                address.get(),
+                                                                                                phone.get(),
+                                                                                                email.get()))
+                    conn.commit()
+                    messagebox.showinfo(title="You're all set!", message="Student registration successful!")
+                except ValueError:
+                    messagebox.showwarning(title="Invalid Data Type", message="Student ID may only contain numbers")
+
+        except Error:
+            messagebox.showwarning(title="Unable To Register", message="This email address has already been "
+                                                                       "registered. Please try a different one.")
     else:
         messagebox.showinfo("Return", "Returning to the previous screen...")
 
@@ -251,65 +179,68 @@ def return_to_main_menu(current_window):
 
 
 def main():
-    # TODO fix multiple connections
-    # TODO add style theme
     # creates database file or connects to database if the file already exists
     conn = create_connection('internship.db')
 
     # Creates main window
     root = Tk()
     root.title("Main Window")
+
+    # Create FGCU image
+    img_banner = ImageTk.PhotoImage(Image.open("fgcu_logo.png"))
+    label_banner = Label(image=img_banner)
+    label_banner.grid(row=0)
+
     # Sets background color
     root.configure(bg="#029E6D")
 
-    Label(root, text="Welcome to the internship database. Please choose an option below:", font=14).pack()
+    Label(root, text="Welcome to the internship database. Please choose an option below:", font=14).grid(row=1)
+
     # Creation of Main Menu buttons
-    Button(root, text="Student Registration", font=14, command=r.create_student_registration_window).pack()
-    Button(root, text="Company Registration", font=14, command=r.create_company_registration_window).pack()
-    Button(root, text="Create Application", font=14, command=create_application_window).pack()
-    Button(root, text="Create Internship", font=14, command=create_new_internship_window).pack()
-    Button(root, text="Query Applications", font=14, command=q.application_query_window).pack()
-    Button(root, text="Query Internships", font=14, command=q.internship_query_window).pack()
+    Button(root, text="Student Registration", font=14, command=r.create_student_registration_window).grid(row=2,
+                                                                                                          pady=5)
+    Button(root, text="Company Registration", font=14, command=r.create_company_registration_window).grid(row=3, pady=5)
+    Button(root, text="Apply To Internship", font=14, command=c.create_application_window).grid(row=4, pady=5)
+    Button(root, text="Create Internship", font=14, command=c.create_new_internship_window).grid(row=5, pady=5)
+    Button(root, text="Query Internships", font=14, command=q.internship_query_window).grid(row=6, pady=5)
 
     # Disabled buttons
-    # tk.Button(root, text="View: Companies", command=create_view_companies).pack()
+    # Button(root, text="View: Companies", command=create_view_companies).pack()
+
+    # Button(root, text="Query Applications", font=14, command=q.application_query_window).pack()
 
     # Creation of SQL tables
-    sql_create_registered_users_table = '''CREATE TABLE IF NOT EXISTS registered_users (
-                    lastname text NOT NULL,
+    sql_create_registered_students_table = '''CREATE TABLE IF NOT EXISTS registered_students (
+                    student_id integer NOT NULL UNIQUE, 
                     firstname text NOT NULL,
-                    address text,
-                    phone_number text,
+                    lastname text NOT NULL,
+                    address text NOT NULL,
+                    phone_number text NOT NULL,
                     email text NOT NULL UNIQUE
                     )'''
 
     sql_create_internships_table = '''CREATE TABLE IF NOT EXISTS internships (
-                        company_name text,
-                        internship_id integer,
-                        start_date text,
-                        end_date text,
-                        description text
+                        internship_id integer primary key AUTOINCREMENT,
+                        company_name text NOT NULL,
+                        start_date text NOT NULL,
+                        end_date text NOT NULL,
+                        description text NOT NULL
                         )'''
 
-    sql_create_company_table = '''CREATE TABLE IF NOT EXISTS company (
-                            company_id  integer,
-                            company_name text,
-                            location text,
-                            internship_id integer,
-                            internship_description text,
-                            num_of_positions text,
-                            primary key (company_id),
-                            foreign key (internship_id) references internships
+    sql_create_registered_companies_table = '''CREATE TABLE IF NOT EXISTS registered_companies (
+                            company_id  integer primary key AUTOINCREMENT,
+                            company_name text NOT NULL,
+                            location text NOT NULL,
+                            phone text NOT NULL,
+                            email text NOT NULL UNIQUE
                             )'''
 
     sql_create_application_table = '''CREATE TABLE IF NOT EXISTS application (
-                           application_id integer,
-                           internship_id integer,
-                           applicant_name text,
-                           status text,
-                           dates text,
-                           primary key (application_id, applicant_name),
-                           foreign key (internship_id) references internships
+                           application_id integer primary key AUTOINCREMENT,
+                           student_id text NOT NULL,
+                           student_first text NOT NULL,
+                           student_last text NOT NULL,
+                           internship_id integer
                            )'''
 
     # **DISABLED** Creation of VIEWS
@@ -318,13 +249,13 @@ def main():
 
     if conn is not None:
         # Create 'registered_users' table
-        create_table(conn, sql_create_registered_users_table)
+        create_table(conn, sql_create_registered_students_table)
 
         # Create 'internships' table
         create_table(conn, sql_create_internships_table)
 
         # Create 'company' table
-        create_table(conn, sql_create_company_table)
+        create_table(conn, sql_create_registered_companies_table)
 
         # Create 'application' table
         create_table(conn, sql_create_application_table)
