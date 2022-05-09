@@ -37,7 +37,7 @@ def create_application_window():
     box_internship_id = Entry(top, width=30)
     box_internship_id.grid(row=4, column=1)
 
-    submit_button = Button(top, text="Submit Application", font=14, command=lambda: m.confirmation_application_input(
+    submit_button = Button(top, text="Submit", font=14, command=lambda: m.confirmation_application_input(
         box_student_id, box_first, box_last, box_internship_id))
     submit_button.grid(row=5, column=1)
 

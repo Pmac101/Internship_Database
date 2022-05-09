@@ -109,7 +109,7 @@ def confirmation_internship_input(name, start, end, description):
     message = messagebox.askquestion("Confirm submission", "Is all of your information correct?", icon="question")
     if message == "yes":
         try:
-            if not name.get() or not start.get() or not end.get() or not description.get("1.0", END):
+            if not name.get() or not start.get() or not end.get() or not description.get():
                 messagebox.showwarning(title="Empty Field", message="Please complete each section.")
             else:
 
@@ -121,7 +121,7 @@ def confirmation_internship_input(name, start, end, description):
 
                 c.execute('''INSERT INTO internships VALUES (?, ?, ?, ?, ?)''', (increment_placeholder, name.get(),
                                                                                  start.get(), end.get(),
-                                                                                 description.get("1.0", END)))
+                                                                                 description.get()))
                 conn.commit()
 
                 c.execute('''SELECT internship_id FROM internships ORDER BY internship_id DESC LIMIT 1''')
@@ -205,8 +205,6 @@ def main():
     Button(root, text="Query Internships", font=14, command=q.internship_query_window).grid(row=6, pady=5)
 
     # Disabled buttons
-    # Button(root, text="View: Companies", command=create_view_companies).pack()
-
     # Button(root, text="Query Applications", font=14, command=q.application_query_window).pack()
 
     # Creation of SQL tables
@@ -242,10 +240,6 @@ def main():
                            student_last text NOT NULL,
                            internship_id integer
                            )'''
-
-    # **DISABLED** Creation of VIEWS
-    # c.execute('''CREATE VIEW IF NOT EXISTS available_companies AS SELECT company_name, internship_id,
-    # application_term, internship_term, description, experience_review FROM internships''')
 
     if conn is not None:
         # Create 'registered_users' table
