@@ -1,6 +1,10 @@
 This was a project for my Data Engineering class. It is an internship database that allows both students and companies to register. Students can query available internships, apply to internships, and view applications they have submitted. Companies can post internships, view applications, and query available internships. This was my first time using SQL and TKinter so it was definitely a learning experience. 
 
 
+
+
+https://user-images.githubusercontent.com/51823622/170737516-731e2876-acc9-4cf6-adbe-736ab79f714e.mp4
+
 ![internship1](https://user-images.githubusercontent.com/51823622/170627188-9c47ef64-94e7-413a-a3ff-e079b2135e5e.JPG)
 
 ![internship2](https://user-images.githubusercontent.com/51823622/170627192-60432455-054a-44ca-bf94-9af6a29f15bc.JPG)
