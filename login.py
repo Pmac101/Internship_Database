@@ -80,11 +80,14 @@ def login_register_window():
     # Creates a window
     login_screen = Tk()
     # Sets window size
-    login_screen.geometry("550x250")
+    login_screen.geometry("690x300")
     # Creates window title
     login_screen.title("Account Login")
     # Sets background color
     login_screen.configure(bg="#029E6D")
+
+    image_header = PhotoImage(file="internship_header.png")
+    Label(login_screen, image=image_header).pack()
 
     # Frames
     frame1 = Frame(login_screen, bg="#029E6D")
@@ -95,7 +98,7 @@ def login_register_window():
 
     # ----------Frame 1: login or register----------
     # Labels
-    Label(frame1, text="Welcome to the internship database. If you are a new user, please register first.",
+    Label(frame1, text="Welcome! If you are a new user, please register first.",
           font=14).pack()
     # Buttons
     Button(frame1, text="Login", font=14, command=lambda: m.frame_transition(frame1, frame5)).pack()
@@ -175,7 +178,7 @@ def login_register_window():
     # Entry boxes
     box_enter_id = Entry(frame5, width=30)
     box_enter_id.grid(row=3, column=1)
-    box_enter_pin = Entry(frame5, width=30)
+    box_enter_pin = Entry(frame5, width=30, show='*')
     box_enter_pin.grid(row=4, column=1)
     # Buttons
     student_button = Button(frame5, text="Student Login", font=14, command=lambda: verify_student_login(login_screen,

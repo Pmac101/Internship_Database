@@ -37,7 +37,7 @@ def application_query_window(return_window, current_user_id):
     tree_application.heading("student_last", text="Last Name", anchor=W)
     tree_application.heading("internship_id", text="Internship ID", anchor=W)
 
-    # Fetches current user's from application table
+    # Fetches the current user's applications
     if return_window == "student":
         c.execute("SELECT * FROM application WHERE student_id=?", (current_user_id,))
     else:

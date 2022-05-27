@@ -20,7 +20,6 @@ def student_window(current_user_id):
     # Frames
     frame1 = Frame(student_screen, bg="#029E6D")
     frame2 = Frame(student_screen, bg="#029E6D")
-    frame3 = Frame(student_screen, bg="#029E6D")
 
     # ----------Frame 1: main student menu----------
     # Buttons

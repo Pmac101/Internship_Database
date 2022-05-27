@@ -3,7 +3,7 @@ import login as l
 from sqlite3 import Error
 from tkinter import *
 from tkinter import messagebox
-from PIL import ImageTk, Image
+
 
 
 # Create connection to database
@@ -270,13 +270,13 @@ def main():
                            )'''
 
     if conn is not None:
-        # Create 'registered_users' table
+        # Create 'registered_students' table
         create_table(conn, sql_create_registered_students_table)
 
         # Create 'internships' table
         create_table(conn, sql_create_internships_table)
 
-        # Create 'company' table
+        # Create 'registered_companies' table
         create_table(conn, sql_create_registered_companies_table)
 
         # Create 'application' table

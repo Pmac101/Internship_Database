@@ -14,6 +14,7 @@ def company_window(current_user_id):
     # Sets background color
     company_screen.configure(bg="#029E6D")
 
+    # Current user ID
     current_user = current_user_id
 
     # Frames
