@@ -1,4 +1,4 @@
-This was a project for my Data Engineering class. It is an internship database that allows both students and companies to register. Students can query available internships, apply to internships, and view applications they have submitted. Companies can post internships, view applications, and query available internships. This was my first time using SQL and TKinter so it was definitely a learning experience. 
+This was a group project for my Data Engineering class. It is an internship database that allows both students and companies to register. Students can query available internships, apply to internships, and view applications they have submitted. Companies can post internships, view applications, and query available internships. This was my first time using SQL and TKinter so it was definitely a learning experience. 
 
 
 
